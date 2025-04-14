@@ -91,13 +91,7 @@
           </form>
     </div>";
 
-    // Filter hotels based on parking and vote criteria
-    $filteredHotels = array_filter($hotels, function($hotel) use ($parkingFilter, $voteFilter) {
-      $passParking = !$parkingFilter || $hotel['parking'];
-      $passVote = !$voteFilter || $hotel['vote'] > 3;
-      return $passParking && $passVote;
-    });
-
+    
     echo "<div class='d-flex justify-content-center m-2'>
     <table class='table table-striped table-hover table-bordered border-secondary shadow-lg'>
       <thead>
