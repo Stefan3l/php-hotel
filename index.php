@@ -50,9 +50,56 @@
         ],
 
     ];
+    
+
+    // Save the filter state in the URL
+    $parkingFilter = isset($_GET['parking']);
+    $voteFilter = isset($_GET['vote']);
+
+    // Check if the form is submitted and filter the hotels accordingly
+    $filteredHotels = $hotels;
+
+    // Check if the filters are set in the URL
+    if ($parkingFilter || $voteFilter) {
+        $filteredHotels = array_filter($hotels, function($hotel) use ($parkingFilter, $voteFilter) {
+            $passParking = !$parkingFilter || $hotel['parking'];
+            $passVote = !$voteFilter || $hotel['vote'] > 3;
+            return $passParking && $passVote;
+        });
+    }
+
+    echo "<h2 class='text-center mb-4'>Filtra</h2>";
+    echo "<div class='d-flex justify-content-center gap-5 mb-4'>
+    <form class='d-flex flex-column gap-2'>
+      <div class='d-flex flex-column'>
+          <div class='form-check'>
+           <input class='form-check-input' type='checkbox' name='parking' id='checkParking' " . ($parkingFilter ? 'checked' : '') . ">
+           <label class='form-check-label' for='checkDefault'>
+             Parcheggio
+           </label>
+          </div>
+          <div class='form-check'>
+           <input class='form-check-input' type='checkbox' name='vote' id='checkVote' " . ($voteFilter ? 'checked' : '') . ">
+           <label class='form-check-label' for='checkDefault2'>
+             Voto maggiore di 3
+           </label>
+          </div>
+          </div>
+          <div class='d-flex justify-content-center gap-2'>
+          <button class='btn btn-primary' type='submit'>Filtra</button>
+          </div>
+          </form>
+    </div>";
+
+    // Filter hotels based on parking and vote criteria
+    $filteredHotels = array_filter($hotels, function($hotel) use ($parkingFilter, $voteFilter) {
+      $passParking = !$parkingFilter || $hotel['parking'];
+      $passVote = !$voteFilter || $hotel['vote'] > 3;
+      return $passParking && $passVote;
+    });
 
     echo "<div class='d-flex justify-content-center m-2'>
-    <table class='table table-striped table-hover'>
+    <table class='table table-striped table-hover table-bordered border-secondary shadow-lg'>
       <thead>
           <tr>
               <th scope='col'>Nome</th>
@@ -64,7 +111,7 @@
       </thead>
       <tbody>";
 
-    foreach ($hotels as $hotel) {
+    foreach ($filteredHotels as $hotel) {
       
         echo "<tr>
         <td>" . $hotel['name'] . "</td>
